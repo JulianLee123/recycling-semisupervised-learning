@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#run simsiam evaluation given a set of hyperparameters (saved image in eval_figs folder)
+
+#in evals_to_run.txt, write entries in format:
+#[batch size] [pred dim] [semi supervised weight] [checkpoint name] [human list filename]
+    #semi supervised weight: a value between 0 and 1 (set to 0 for unsupervised simsiam)
+    #checkpoint name: to reference the checkpoint for epoch n, use the format checkpoint_[n]
+        #n must be a multiple of 100
+    #all available checkpoints in save->crops
+#file must end with a newline
+
+IFS=' '
+
+cat evals_to_run.txt | while read line
+do
+    read -a entry <<< "$line"
+    sed -i "s/batch_size:.*/batch_size: ${entry[0]}/" config/config.yaml
+    sed -i "s/pred-dim:.*/pred-dim: ${entry[1]}/" config/config.yaml
+    sed -i "s/semi_supervised_weight:.*/semi_supervised_weight: ${entry[2]}/" config/config.yaml
+    sed -i "s/eval_checkpoint_num:.*/eval_checkpoint_num: ${entry[3]}/" config/config.yaml
+    sed -i "s/human_list_filename:.*/human_list_filename: ${entry[4]}/" config/config.yaml
+    python average_evaluate.py
+done

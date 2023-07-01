@@ -1,0 +1,37 @@
+# general
+seed: 42
+workers: 8 #number of data loading workers (originally 32)
+dataset_dir: "/home/scazlab/Crops_Dataset"
+list_path: "/home/scazlab/Crops_Dataset/file_lists/"
+human_list_filename: 'Human_Intact_Cans_1.txt'
+image_size: 128
+
+#modifiable options
+semi_supervised_weight: 0.0
+epochs: 100
+batch_size: 64
+pred_dim: 512
+
+run_name: #AUTOMATICALLY SET IN FORMAT: bs_64_projdim_512_ep_1000_ss
+
+# evaluation
+eval_checkpoint_num: best_checkpoint_91
+metric_save_json: 
+
+# train options
+start_epoch: 0 #used for restarts
+dataset: "crops" # CIFAR-10 / CIFAR-100 / STL-10 / ImageNet-10 / ImageNet-dogs / tiny-ImageNet
+print-freq: 1000 #just once per epoch
+mean: [128, 128, 128]
+
+# model options
+arch: "resnet18" # ResNet18 / ResNet34 / ResNet50
+dim: 2048
+fix-pred-lr: True #Fix learning rate for predictor
+model_path: "/home/scazlab/catkin_ws/src/recycling_stretch/scripts/simsiam/save" #equiv. to resume
+eval_epoch: 1000
+
+# loss options
+lr: 0.05
+momentum: 0.9
+weight_decay: 0.0001

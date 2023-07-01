@@ -41,21 +41,24 @@ class SimSiam(nn.Module):
                                         nn.ReLU(inplace=True), # hidden layer
                                         nn.Linear(pred_dim, dim)) # output layer
 
-    def forward(self, x1, x2):
+    def forward(self, x0, x1, x2):
         """
         Input:
+            x0: original views of the images
             x1: first views of images
             x2: second views of images
         Output:
+            z0: encoded original image 
             p1, p2, z1, z2: predictors and targets of the network
             See Sec. 3 of https://arxiv.org/abs/2011.10566 for detailed notations
         """
 
         # compute features for one view
+        z0 = self.encoder(x0)
         z1 = self.encoder(x1) # NxC
         z2 = self.encoder(x2) # NxC
 
         p1 = self.predictor(z1) # NxC
         p2 = self.predictor(z2) # NxC
 
-        return p1, p2, z1.detach(), z2.detach()
+        return p1, p2, z0.detach(), z1.detach(), z2.detach()

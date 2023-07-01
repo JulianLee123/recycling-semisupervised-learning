@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#run simsiam training given a set of hyperparameters
+#runs for 1000 epochs per test (can be modified in config.yaml); model saved every 100 epochs
+
+#in training_to_run.txt, write entries in format:
+#[batch size] [pred dim] [semi supervised weight] [human_list_filename]
+    #semi supervised weight: a value between 0 and 1 (set to 0 for unsupervised simsiam)
+    #file must end with a newline
+
+#Name of run in format: bs_[batch size]_projdim_[proj dim]_ep_[# total epochs]_hlf_[human_list_filename]_ss_[semi_supervised_weight]
+    #checkpoints saved under save->crops
+    #if semi_supervised_weight = 0, ss_0 doesn't show up in the name
+    #run tensorboard on the runs folder to get total, semi supervised, and simsiam losses 
+
+IFS=' '
+
+cat training_to_run.txt | while read line
+do
+    read -a entry <<< "$line"
+    sed -i "s/batch_size:.*/batch_size: ${entry[0]}/" config/config.yaml
+    sed -i "s/pred-dim:.*/pred-dim: ${entry[1]}/" config/config.yaml
+    sed -i "s/semi_supervised_weight:.*/semi_supervised_weight: ${entry[2]}/" config/config.yaml
+    sed -i "s/human_list_filename:.*/human_list_filename: ${entry[3]}/" config/config.yaml
+    python main_simsiam.py
+done
